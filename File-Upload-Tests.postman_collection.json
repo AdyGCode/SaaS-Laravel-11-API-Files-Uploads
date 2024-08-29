@@ -1,0 +1,168 @@
+{
+	"info": {
+		"_postman_id": "31d2f472-da93-4c36-98c1-e2770375da60",
+		"name": "File Upload Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3554923"
+	},
+	"item": [
+		{
+			"name": "Show all products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURI}}/api/v1/products",
+					"host": [
+						"{{baseURI}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Show one product",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURI}}/api/v1/products/5",
+					"host": [
+						"{{baseURI}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"products",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a product",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "_method",
+						"value": "DELETE",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseURI}}/api/v1/products/5",
+					"host": [
+						"{{baseURI}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"products",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Show one product (error)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURI}}/api/v1/products/1122123432",
+					"host": [
+						"{{baseURI}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"products",
+						"1122123432"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a product (no file)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "Test3",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "A simple bit of text3",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseURI}}/api/v1/products",
+					"host": [
+						"{{baseURI}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a product (with file)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Test",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "A simple bit of text",
+							"type": "text"
+						},
+						{
+							"key": "product_image\n",
+							"type": "file",
+							"src": "/C:/Users/5001775/Downloads/test-image.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseURI}}/api/v1/products",
+					"host": [
+						"{{baseURI}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"products"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
