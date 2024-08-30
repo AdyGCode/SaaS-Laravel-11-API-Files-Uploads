@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('name', 128);
             $table->text('detail')->nullable();
             $table->string('original_filename', 255)->nullable();
-            $table->string('mime_type', 255)->nullable();
+            $table->string('mime_type', 64)->nullable();
             $table->string('stored_filename', 255)->nullable();
 
             $table->timestamps();

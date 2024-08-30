@@ -11,7 +11,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::group(['prefix' => 'v1'], function () {
     // only expose the index and show to all users
     Route::apiResource('/products', ProductController::class)
-        ->except(['update',]);
+        ->except(['create',]);
 
     // only allow authenticated users to access create, update and delete
 //    Route::apiResource('/products', ProductController::class)

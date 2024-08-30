@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 
@@ -26,12 +26,29 @@ class ProductController extends BaseController
     public function store(Request $request)
     {
 
-        $request->validate([
-            'name' => 'required',
-            'description' => 'sometimes',
-            'product_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+        $validator = Validator::make($request->all(), [
+            'name' => [
+                'required',
+                'min:4'
+            ],
+            'description' => [
+                'sometimes',
+                'min:12'
+            ],
+            'product_image' => [
+                'sometimes',
+                'image',
+                'mimes:jpeg,png,jpg,gif',
+                'max:1024',
+                'dimensions:min_width=100,min_height=100,max_width=2048,max_height=2048',
+            ],
         ]);
 
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+
+            return $this->sendError("Error in product data", $errors);
+        }
 
         $productImage = $request->file('product_image');
         $originalName = null;
@@ -41,7 +58,7 @@ class ProductController extends BaseController
         if ($productImage != null) {
             $originalExtension = $productImage->extension();
             $originalName = $productImage->getClientOriginalName();
-            $storedName = Str::uuid().'.'.$originalExtension;
+            $storedName = Str::uuid() . '.' . $originalExtension;
             $request->product_image->storeAs('images', $storedName);
             $mimeType = $productImage->getClientMimeType();
         }
@@ -53,6 +70,7 @@ class ProductController extends BaseController
             "original_filename" => $originalName ?? null,
             "stored_filename" => $storedName ?? null,
         ]);
+        $product->save();
 
         return $this->sendResponse($product, "Created product");
 
@@ -63,13 +81,13 @@ class ProductController extends BaseController
      */
     public function show(string $id)
     {
-        $data = Product::whereId($id)->get();
+        $product = Product::whereId($id)->get();
 
-        if ($data->isEmpty()) {
-            return $this->sendError("Product Not Found", $data);
+        if ($product->isEmpty()) {
+            return $this->sendError("Product Not Found", $product);
         }
 
-        return $this->sendResponse($data, "Product retrieved successfully");
+        return $this->sendResponse($product, "Product retrieved successfully");
 
     }
 
@@ -84,18 +102,24 @@ class ProductController extends BaseController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(int $id)
     {
 
-        $product = Product::whereId($id)->first()->get();
+        $products = Product::whereId($id)->limit(1)->get();
 
-        $storedName = $product->stored_filename;
-        dd($storedName);
+        if ($products->isEmpty()) {
+            return $this->sendError("Product Not Found", $products);
+        }
 
-        Storage::delete('images/'. $storedName);
+        foreach ($products as $product) {
+            $storedName = $product->stored_filename;
 
-        $product->delete();
+            if(Storage::exists('images/' . $storedName)) {
+                Storage::delete('images/' . $storedName);
+            }
 
+            $product->delete();
+        }
 
         return $this->sendResponse($product, "Product deleted");
     }
